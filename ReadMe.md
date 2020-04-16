@@ -5,17 +5,17 @@ This repository hosts source code for our project on Denver housing market analy
 
 ### |-- Notebooks
 	This folder contains three Jupyter Notebook, covering code from data cleaning to modeling.
-Initial data process was done in QGIS environment due to lack of common keys in different data sets.To link single family house records and neighborhood features, their spatial relationship was applied such that each property was assigned a neighborhood id to extract neighborhood-level attributes.
+Initial data process was done in QGIS environment due to lack of common keys in different data sets. To link single family house records and neighborhood features, their spatial relationships were applied such that each property was assigned a neighborhood id to extract neighborhood-level attributes.
 
-Also based on spatial relationship, we have summarized key features in each neighborhood, such as the number of crimes, traffic accidents, percentage of tree coverage. Distance to nearest food stores/schools/parks from each property was also calculated for model preparation.
+Also based on spatial relationship, we have summarized key features in each neighborhood, such as the number of crimes, traffic accidents, percentage of tree coverage. Distances to nearest food stores/schools/parks from each property were also calculated for model preparation.
 
 ### |-- Data
 	This folder contains original and processed data for Notebooks
-The key data is the historical house selling price associated with the property details, collected from [Denver open data website](https://www.denvergov.org/opendata). The original data contains ~200,000 house sales records from 1945 to 2020. Of these, single family house records between 2000 and 2020 were filtered for inclusion in this project.
+The key data is the historical house selling records associated with property details, collected from [Denver open data website](https://www.denvergov.org/opendata). The original data contains ~200,000 house sales records from 1945 to 2020. Of these, single family house records between 2000 and 2020 were filtered for inclusion in this project.
 
-We also collected Denver neighborhood-level features from [Redfin](https://www.redfin.com/blog/data-center/) and [Denver website](https://www.denvergov.org/opendata), for the showing of demographical, socio-economic, environmental differences among neighborhoods
+We also collected Denver neighborhood-level features from [Redfin](https://www.redfin.com/blog/data-center/) and [Denver website](https://www.denvergov.org/opendata), for the showing of demographical, socio-economic, environmental differences among neighborhoods.
 
-The final data set is the consumer price index report, collected from [Bureau of Labor Statistics](https://data.bls.gov/cgi-bin/srgate), for inflation adjustment over the year.
+The final data set is the consumer price index report, collected from [Bureau of Labor Statistics](https://data.bls.gov/cgi-bin/srgate), for inflation adjustment over the years.
 
 ### |-- CSVFiles
 	text files for necessary data
