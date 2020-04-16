@@ -18,7 +18,7 @@ We also collected Denver neighborhood-level features from [Redfin](https://www.r
 The final data set is the consumer price index report, collected from [Bureau of Labor Statistics](https://data.bls.gov/cgi-bin/srgate), for inflation adjustment over the years.
 
 ### |-- CSVFiles
-	text files for necessary data
+	text files used in the website
 CSV files include text files converted from the original shapefiles (DBF files), consume price index report, and processed data from original dataset.
 
 ### |-- JsonFiles
