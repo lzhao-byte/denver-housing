@@ -1,41 +1,54 @@
-# Project Description
-
-## Description
-This repository hosts source code for our project on Denver housing market analytics. 
+## Project Description
+This repository hosts source code for our project on Denver housing market analytics. This project visualizes the analytics of Denver single family housing market, showing both historical and predicted house prices in Denver area. 
 
 ## File Structure
 
-### Notebooks
+### |-- Notebooks
 	This folder contains three Jupyter Notebook, covering code from data cleaning to modeling.
+Initial data process was done in QGIS environment due to lack of common keys in different data sets.To link single family house records and neighborhood features, their spatial relationship was applied such that each property was assigned a neighborhood id to extract neighborhood-level attributes.
 
-### Data
+Also based on spatial relationship, we have summarized key features in each neighborhood, such as the number of crimes, traffic accidents, percentage of tree coverage. Distance to nearest food stores/schools/parks from each property was also calculated for model preparation.
+
+### |-- Data
 	This folder contains original and processed data for Notebooks
+The key data is the historical house selling price associated with the property details, collected from [Denver open data website](https://www.denvergov.org/opendata). The original data contains ~200,000 house sales records from 1945 to 2020. Of these, single family house records between 2000 and 2020 were filtered for inclusion in this project.
 
-### CSVFiles
+We also collected Denver neighborhood-level features from [Redfin](https://www.redfin.com/blog/data-center/) and [Denver website](https://www.denvergov.org/opendata), for the showing of demographical, socio-economic, environmental differences among neighborhoods
+
+The final data set is the consumer price index report, collected from [Bureau of Labor Statistics](https://data.bls.gov/cgi-bin/srgate), for inflation adjustment over the year.
+
+### |-- CSVFiles
 	text files for necessary data
 
-### JsonFiles
+### |-- JsonFiles
 	geojson files for map plotting
 
-### Models
+### |-- Models
 	house price prediction model, model parameter description
 
-### Credentials
+### |-- Credentials
 	store credentials for Mapbox and Google Street View features
 
-### assets
+### |-- assets
 	css style files, website icon
 
-### app.py
+### |-- app.py
 	main python file for website deployment
-	
-### utils.py
+The intent is to provide users with comprehensive knowledge and extensive information related to their househunting in Denver by integrating historical transaction data, neighborhood characteristics and price predicting model.
+
+The website was created with [Plotly Dash](https://plotly.com/) and hosted on [heroku](https://www.heroku.com/). It contains four tabs: 
+
+	* Denver house: where web users see historical house sale records and  price prediction model.
+	* Denver Neighborhood: where all neighborhood features and median sale prices can be queried, serving as a reference for house hunting.
+	* Denver City: where we provide comparisons on key housing market metrics among cities that are similar to Denver.
+	* About: where we provide a brief explanation of the entire project.
+
+### |-- utils.py
 	utility functions for the application
-
 	
-### Installation and Execution
+## Installation and Execution
 
-Our application is hosted on heroku.com, website address is:
+Our application is hosted on [heroku](https://www.heroku.com/), website address is:
 	https://test-denver.herokuapp.com/
 
 To host our website locally, a python version of or above 3.7.6 is needed
