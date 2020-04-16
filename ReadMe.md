@@ -65,7 +65,7 @@ To host our website locally, a python version of or above 3.7.6 is needed
 	  > pip install numpy pandas dash dash_core_components dash_html_components dash_bootstrap_components dash_table xgboost jsonschema
 	  > python app.py
 	Open website with any internet browser using following address
-		http://127.0.0.1:8050
+	  http://127.0.0.1:8050
 		
 Notes: we use credentials to show additional features such as _Google Street View picture_ for each house, to use such feature, please copy and paste your Mapbox access token to 
 	
