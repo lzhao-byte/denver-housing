@@ -19,18 +19,23 @@ The final data set is the consumer price index report, collected from [Bureau of
 
 ### |-- CSVFiles
 	text files for necessary data
+CSV files include text files converted from the original shapefiles (DBF files), consume price index report, and processed data from original dataset.
 
 ### |-- JsonFiles
 	geojson files for map plotting
+Geojson files were converted from the original shapefiles for website map plotting purpose.
 
 ### |-- Models
 	house price prediction model, model parameter description
+We built an XGBoost model and compared it with a baseline Lasso regression model. The XGBoost model yielded a mean prediction error of $44K, and a median prediction error of $13K, compared to a $73k mean error and a $29K median error from the baseline model. Besides the proposed model and the baseline model, Random forest and ANN models were also included for comparison purpose.
 
 ### |-- Credentials
 	store credentials for Mapbox and Google Street View features
+Credentials are optional, only used for additional features (Google Street View picture for each property) and neighborhood amenity symbols.
 
 ### |-- assets
 	css style files, website icon
+CSS Style file for the website.
 
 ### |-- app.py
 	main python file for website deployment
