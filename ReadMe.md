@@ -38,10 +38,10 @@ The intent is to provide users with comprehensive knowledge and extensive inform
 
 The website was created with [Plotly Dash](https://plotly.com/) and hosted on [heroku](https://www.heroku.com/). It contains four tabs: 
 
-	* Denver house: where web users see historical house sale records and  price prediction model.
-	* Denver Neighborhood: where all neighborhood features and median sale prices can be queried, serving as a reference for house hunting.
-	* Denver City: where we provide comparisons on key housing market metrics among cities that are similar to Denver.
-	* About: where we provide a brief explanation of the entire project.
+	Denver house: where web users see historical house sale records and  price prediction model.
+	Denver Neighborhood: where all neighborhood features and median sale prices can be queried, serving as a reference for house hunting.
+	Denver City: where we provide comparisons on key housing market metrics among cities that are similar to Denver.
+	About: where we provide a brief explanation of the entire project.
 
 ### |-- utils.py
 	utility functions for the application
@@ -53,13 +53,13 @@ Our application is hosted on [heroku](https://www.heroku.com/), website address 
 
 To host our website locally, a python version of or above 3.7.6 is needed
 	
-	a. download and unzip 'denver-housing' folder
-	b. open the command line
-	c. nagivate to 'denver-housing' folder
-	d. run the following code
-		> pip install numpy pandas dash dash_core_components dash_html_components dash_bootstrap_components dash_table xgboost jsonschema
-		> python app.py
-	e. open website with any internet browser using following address
+	Download and unzip 'denver-housing' folder
+	Open the command line
+	Nagivate to 'denver-housing' folder
+	Run the following code
+	  > pip install numpy pandas dash dash_core_components dash_html_components dash_bootstrap_components dash_table xgboost jsonschema
+	  > python app.py
+	Open website with any internet browser using following address
 		http://127.0.0.1:8050
 		
 Notes: we use credentials to show additional features such as _Google Street View picture_ for each house, to use such feature, please copy and paste your Mapbox access token to 
