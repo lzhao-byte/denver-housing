@@ -1,0 +1,24 @@
+[project]
+name = "denver-housing"
+version = "1.1.0"
+description = "Denver single-family housing analytics: price models and a Plotly Dash app"
+readme = "ReadMe.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dash>=2.17",
+    "dash-bootstrap-components>=1.6",
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "plotly>=5.20",
+    "xgboost>=2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false

@@ -2,42 +2,14 @@ import os
 from itertools import product
 import time
 
-try:
-    import numpy as np
-except:
-    os.system("pip install numpy")
-    import numpy as np
-    
-try:
-    import pandas as pd
-except:
-    os.system("pip install pandas")
-    import pandas as pd
-
 import json
 
-try:
-    import xgboost as xgb
-except:
-    os.system("pip3 install xgboost")
-    import xgboost as xgb
-
-try:
-    import dash_core_components as dcc
-except:
-    os.system("pip install dash==1.9.1")
-    import dash_core_components as dcc
-import dash_html_components as html
-try:
-    import dash_bootstrap_components as dbc
-except:
-    os.system("pip install dash-bootstrap-components==1.1.1")
-    import dash_bootstrap_components as dbc
-try:
-    import plotly.graph_objects as go
-except:
-    os.system("pip install plotly")
-    import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
+import xgboost as xgb
+from dash import dcc, html
 
 # grab mapbox token and street view api
 def grab_credentials():

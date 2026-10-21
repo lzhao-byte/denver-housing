@@ -7,30 +7,10 @@ import os, json, urllib
 import pandas as pd
 import numpy as np
 
-try:
-    import dash_core_components as dcc
-except:
-    os.system("pip install dash==1.9.1")
-    import dash_core_components as dcc
-import dash_html_components as html
-try:
-    import dash_bootstrap_components as dbc
-except:
-    os.system("pip install dash-bootstrap-components==1.1.1")
-    import dash_bootstrap_components as dbc
-
-try:
-    import dash
-except:
-    os.system("pip install dash==1.9.1")
-    import dash
-
-try:
-    import dash_table as dt
-except:
-    os.system("pip install dash-table==4.6.1")
-    import dash_table as dt
-
+import dash
+import dash_bootstrap_components as dbc
+from dash import dash_table as dt
+from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
@@ -1283,4 +1263,4 @@ def update_city_fig_ccc(sel_city,sel_met):
 
 if __name__ == '__main__':
     #pass
-    app.run_server(debug = True)
+    app.run(debug = True)
