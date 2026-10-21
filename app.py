@@ -1133,7 +1133,6 @@ def update_neighbor_price_chart(sel_value,sel_met):
                 'size': np.sqrt(neighbor_prices[neighbor_prices['NBHD_NAME'] == val][met]) / scale,
             },
             'textposition': 'top center',
-            'log_x': True,
         }
         price_data.append(data)
     return {
