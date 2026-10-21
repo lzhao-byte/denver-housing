@@ -1,4 +1,4 @@
-from utils import (load_files, draw_base_map, grab_credentials,
+from utils import (load_files, draw_base_map, grab_street_view_key,
                     draw_house_base_map, update_house_base_map, predict_house_xgb, 
                     write_about, load_markdowns, 
                     load_app_header, family_demo_filter,load_neighbor_features,draw_store_map)
@@ -546,7 +546,7 @@ app.layout = html.Div([
     ]
 )
 def select_from_house_map(sel_house, n_clicks, button_predict_clicks):
-    _, api_key = grab_credentials()
+    api_key = grab_street_view_key()
     pre_string = 'https://maps.googleapis.com/maps/api/streetview?size=200x200&location='
     aft_string = '&fov=40&key='+ api_key
     ctx = dash.callback_context

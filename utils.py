@@ -29,10 +29,9 @@ def load_xgb_model():
 def load_model_inputs():
     return pd.read_csv('CSVFiles/NeighborModelInputs.csv').set_index('NBHD_ID')
 
-# Mapbox token and Google Street View key are optional; without them the app
-# falls back to a token-free basemap and hides Street View thumbnails.
-def grab_credentials():
-    return os.environ.get('MAPBOX_ACCESS_TOKEN', ''), os.environ.get('GOOGLE_STREET_VIEW_API_KEY', '')
+# Google Street View Static API key (optional); without it the app shows no thumbnails
+def grab_street_view_key():
+    return os.environ.get('GOOGLE_STREET_VIEW_API_KEY', '')
 
 # about tab
 def write_about():
@@ -331,7 +330,7 @@ def load_files():
 def draw_family_base_map(json_single_family, family_demo, family_dist):
     return {
         'data': [{
-            'type': "choroplethmapbox", 
+            'type': "choroplethmap", 
             'geojson': json_single_family,
             'locations': family_dist['SCHEDNUM_STR'],
             'z': family_dist['StoreDist'],
@@ -352,17 +351,11 @@ def draw_family_base_map(json_single_family, family_demo, family_dist):
             'height': 700,
             'hovermode': 'closest',
             'autosize': True,
-            'mapbox': {
+            'map': {
                 'center': {'lat': 39.7114, 'lon': -104.9360},
                 'zoom': 10.5,
-                'style': 'white-bg',  
+                'style': 'carto-positron',
                 'layers': [
-                    {
-                        'source': ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
-                        'opacity': 0.3,
-                        'sourcetype': 'raster',
-                        'below': 'traces',
-                    },
                 ],                             
             },
         }
@@ -370,7 +363,7 @@ def draw_family_base_map(json_single_family, family_demo, family_dist):
 
 def draw_base_map(json_neighbor, neighbor_prices, neighbor_house_record, sel_nbhd):			
     data=[{
-            'type': "choroplethmapbox", 
+            'type': "choroplethmap", 
             'geojson': json_neighbor,
             'locations': neighbor_prices[neighbor_prices['SALE_YEAR'] == 2019]['NBHD_NAME'].astype(str),
             'z': neighbor_prices[neighbor_prices['SALE_YEAR'] == 2019]['SALE_PRICE'],
@@ -384,7 +377,7 @@ def draw_base_map(json_neighbor, neighbor_prices, neighbor_house_record, sel_nbh
             'colorscale': 'YlOrRd',
             'reversescale': True,
             'unselected': {
-                'marker': {'opacity': 0.5, 'line': {'color': 'lightgrey'}},
+                'marker': {'opacity': 0.5},
             }
             }
         ]
@@ -396,17 +389,11 @@ def draw_base_map(json_neighbor, neighbor_prices, neighbor_house_record, sel_nbh
         'height': 700,
         'hovermode': 'closest',
         'autosize': True,
-        'mapbox': {
+        'map': {
             'center': {'lat': 39.7114, 'lon': -104.9360},
             'zoom': 10.5,
-            'style': 'white-bg',  
+            'style': 'carto-positron',
             'layers': [
-                {
-                    'source': ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
-                    'opacity': 0.3,
-                    'sourcetype': 'raster',
-                    'below': 'traces',
-                },
                 {
                     'source': json_sel_nbhd,
                     'below': 'traces',
@@ -425,15 +412,10 @@ def draw_base_map(json_neighbor, neighbor_prices, neighbor_house_record, sel_nbh
 
 # update house hunting map
 def update_house_base_map(json_single_family, family_demo, json_neighbor, neighbor_house_record, sel_nbhd):
-    access_token, _ = grab_credentials()
-    if access_token == '':
-        style = 'stamen-terrain'
-    else:
-        style = 'light'
     return {
         'data': [
             {
-                'type': "choroplethmapbox",
+                'type': "choroplethmap",
                 'geojson': json_single_family,
                 'locations': family_demo['SCHEDNUM'],
                 'z': family_demo['SALE_PRICE'],
@@ -455,11 +437,10 @@ def update_house_base_map(json_single_family, family_demo, json_neighbor, neighb
             'margin': {"r":10, "t": 0, "l":10,"b":10},
             'hovermode': 'closest',
             'autosize': True,
-            'mapbox': {
+            'map': {
                 'center': {'lat': neighbor_house_record[neighbor_house_record['NBHD_NAME'] == sel_nbhd]['Lat'].values[0], 'lon': neighbor_house_record[neighbor_house_record['NBHD_NAME'] == sel_nbhd]['Lon'].values[0]},
                 'zoom': 14,
-                'style': style,
-                'accesstoken': access_token,
+                'style': 'carto-positron',
                 'layers': [
                     {
                         'source': json_neighbor,
@@ -467,7 +448,7 @@ def update_house_base_map(json_single_family, family_demo, json_neighbor, neighb
                         'type': "fill",     
                         'color': 'yellow',
                         'opacity': 0.05,
-                        'fill': {'outlinecolor': 'red', 'outlinewidth': 2}
+                        'fill': {'outlinecolor': 'red'}
                     }
                 ],
             },
@@ -478,7 +459,7 @@ def update_house_base_map(json_single_family, family_demo, json_neighbor, neighb
 def update_house_base_map_origin(sel_nbhd, json_neighbor, neighbor_house_record):
     return {
         'data': [{
-                'type': "choroplethmapbox", 
+                'type': "choroplethmap", 
                 'geojson': json_neighbor,
                 'locations': neighbor_house_record[neighbor_house_record['NBHD_NAME'] == sel_nbhd]['NBHD_NAME'].astype(str),
                 'z': neighbor_house_record[neighbor_house_record['NBHD_NAME'] == sel_nbhd]['SALE_PRICE'] / 10.,
@@ -491,7 +472,7 @@ def update_house_base_map_origin(sel_nbhd, json_neighbor, neighbor_house_record)
             },
 
             {
-                'type': "choroplethmapbox", 
+                'type': "choroplethmap", 
                 'geojson': json_neighbor,
                 'locations': neighbor_house_record[neighbor_house_record['NBHD_NAME'] != sel_nbhd]['NBHD_NAME'].astype(str),
                 'z': neighbor_house_record[neighbor_house_record['NBHD_NAME'] != sel_nbhd]['SALE_PRICE'] / 10.,
@@ -507,17 +488,11 @@ def update_house_base_map_origin(sel_nbhd, json_neighbor, neighbor_house_record)
             'margin': {"r":10, "t": 0, "l":10,"b":10},
             'hovermode': 'closest',
             'autosize': True,
-            'mapbox': {
+            'map': {
                 'center': {'lat': 39.7114, 'lon': -104.9360},
                 'zoom': 11,
-                'style': 'white-bg',                    
-                'layers': [
-                        {
-                        'source': ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
-                        'opacity': 0.3,
-                        'sourcetype': 'raster',
-                        'below': 'traces',
-                    }],                              
+                'style': 'carto-positron',
+                'layers': [],                              
             },
         }
     }
@@ -527,7 +502,7 @@ def draw_house_base_map(json_neighbor, neighbor_house_record):
     return {
         'data': [
                 {
-                'type': "choroplethmapbox", 
+                'type': "choroplethmap", 
                 'geojson': json_neighbor,
                 'locations': neighbor_house_record['NBHD_NAME'].astype(str),
                 'z': neighbor_house_record['SALE_PRICE'] / 10.,
@@ -539,7 +514,7 @@ def draw_house_base_map(json_neighbor, neighbor_house_record):
                  'colorscale': 'Reds',
             }
             #{
-            #'type': "scattermapbox", 
+            #'type': "scattermap", 
             #'lon': neighbor_house_record['Lon'],
             #'lat': neighbor_house_record['Lat'],
             #'text': neighbor_house_record['NBHD_NAME'] + '<br>' + 'Annual Average Houses Sold: ' + neighbor_house_record['SALE_PRICE'].apply(lambda x: round(x/10.)).astype(str),
@@ -553,17 +528,11 @@ def draw_house_base_map(json_neighbor, neighbor_house_record):
             'margin': {"r":10, "t": 0, "l":10,"b":10},
             'hovermode': 'closest',
             'autosize': True,
-            'mapbox': {
+            'map': {
                 'center': {'lat': 39.7114, 'lon': -104.9360},
                 'zoom': 11,
-                'style': 'white-bg', 
+                'style': 'carto-positron',
                 'layers': [
-                    {
-                        'source': ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
-                        'opacity': 0.3,
-                        'sourcetype': 'raster',
-                        'below': 'traces',
-                    },
                     #{
                     #    'source': json_neighbor,
                     #    'below': 'traces',
@@ -637,42 +606,18 @@ def draw_store_map(sel_nbhd, features, parks, json_neighbor, neighbor_centers):
     data = []
     zoom = 11 if len(sel_nbhd) > 1 else 13
 
-    access_token,_ = grab_credentials()
-
     for tp in types:
-        if tp == 'College':
-            symbol = 'college'
-        elif tp == 'K-12':
-            symbol = 'school'
-        elif tp == 'Marijuana':
-            symbol = 'commercial'
-        elif tp == 'Library':
-            symbol = 'library'
-        elif tp == 'Food Store':
-            symbol = 'grocery'
-        elif tp == 'Shopping Center':
-            symbol = 'shop'
-        
-        if access_token == '':
-            marker = {'size': 16},
-            style = 'stamen-terrain'
-            legend = True
-        else:
-            marker = {'size': 14, 'symbol': symbol}
-            style = 'light'
-            legend = False
-
         data_dict = {
-            'type': "scattermapbox", 
+            'type': "scattermap", 
             'lon': sel_features[sel_features['Type'] == tp]['Lon'].values,
             'lat': sel_features[sel_features['Type'] == tp]['Lat'].values,
             'text': sel_features[sel_features['Type'] == tp]['Name'].values + '__' + sel_features[sel_features['Type'] == tp]['NBRHD_NAME'].values[0],
             'hoverinfo': 'text',
             'mode': 'markers',
             'opacity': 0.8,
-            'marker': marker,
+            'marker': {'size': 12},
             'name': tp,
-            'showlegend': legend
+            'showlegend': True
         }
         data.append(data_dict)
 
@@ -686,11 +631,10 @@ def draw_store_map(sel_nbhd, features, parks, json_neighbor, neighbor_centers):
             'hovermode': 'closest',
             'autosize': True,
             'legend':{'x': 0, 'y': 1},
-            'mapbox': {
+            'map': {
                 'center': {'lat': np.mean(sel_nbhds['Lat'].values), 'lon': np.mean(sel_nbhds['Lon'].values)},
                 'zoom': zoom,
-                'style': style,
-                'accesstoken': access_token,
+                'style': 'carto-positron',
                 'layers': [                 
                     {
                         'source': json_neighbor,
