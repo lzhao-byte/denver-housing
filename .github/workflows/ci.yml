@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+      - run: uv run --only-group dev ruff check .
+
+  test:
+    name: test (py${{ matrix.python }}, ${{ matrix.resolution }} deps)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+        resolution: [locked]
+        include:
+          - python: "3.12"
+            resolution: lowest-direct  # dash 3.0, plotly 6.0, pandas 2.2, xgboost 2.0, numpy 1.26
+    steps:
+      - uses: actions/checkout@v5  # LFS objects are not needed; the app and tests don't read them
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - if: matrix.resolution == 'locked'
+        run: uv sync --locked
+      - if: matrix.resolution != 'locked'
+        run: uv sync --resolution ${{ matrix.resolution }}
+      - run: uv run --no-sync pytest --cov=utils --cov=app --cov-report=term-missing
