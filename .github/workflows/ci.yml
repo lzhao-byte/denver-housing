@@ -7,15 +7,16 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    # Pinned so the OS changes only on purpose (ubuntu-latest moves to 26.04 during Oct-Nov 2026).
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0  # no major-version tags since v8
       - run: uv run --only-group dev ruff check .
 
   test:
     name: test (py${{ matrix.python }}, ${{ matrix.resolution }} deps)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -25,8 +26,8 @@ jobs:
           - python: "3.12"
             resolution: lowest-direct  # dash 3.0, plotly 6.0, pandas 2.2, xgboost 2.0, numpy 1.26
     steps:
-      - uses: actions/checkout@v5  # LFS objects are not needed; the app and tests don't read them
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v7  # LFS objects are not needed; the app and tests don't read them
+      - uses: astral-sh/setup-uv@v10.3.0
         with:
           python-version: ${{ matrix.python }}
       - if: matrix.resolution == 'locked'
