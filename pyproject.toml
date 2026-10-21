@@ -22,3 +22,14 @@ dev = [
 
 [tool.uv]
 package = false
+
+[tool.ruff]
+target-version = "py311"
+extend-exclude = ["Notebooks"]
+
+[tool.ruff.lint]
+# Real errors only (pycodestyle E4/E7/E9, pyflakes); line length is not enforced.
+select = ["E4", "E7", "E9", "F"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

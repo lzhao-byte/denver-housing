@@ -1,9 +1,10 @@
 from utils import (load_files, draw_base_map, grab_credentials,
                     draw_house_base_map, update_house_base_map, predict_house_xgb, 
-                    draw_family_base_map, write_about, load_markdowns, 
+                    write_about, load_markdowns, 
                     load_app_header, family_demo_filter,load_neighbor_features,draw_store_map)
 
-import os, json, urllib
+import json
+import urllib
 import pandas as pd
 import numpy as np
 
@@ -957,7 +958,7 @@ def update_neighbor_map(sel_nbhd,sel_cli):
     [Input('neighbor-price-chart-list', 'value')]
 )
 def map_display(sel_val):
-    if sel_val==None or len(sel_val)==0:
+    if sel_val is None or len(sel_val)==0:
         return {"display":"none"}
     return {"display":"contents"}
 
@@ -1012,7 +1013,7 @@ def update_neighbor_price_chart(sel_value,sel_met):
     price_data = []
     frames = []
     steps = []
-    if sel_met==None or len(sel_met)==0:
+    if sel_met is None or len(sel_met)==0:
         title = "Median Sale Price"
         met = "SALE_PRICE"
         scale = 50
@@ -1168,7 +1169,7 @@ def update_neighbor_price_chart(sel_value,sel_met):
     [Input('nsc_met','value')]
 )
 def update_fig_nsc(sel_met):
-    if sel_met == None or len(sel_met)==0:
+    if sel_met is None or len(sel_met)==0:
         met="Median Sale Price"
     else:
         met=sel_met
@@ -1217,12 +1218,12 @@ def update_fig_nsc(sel_met):
 
 def update_city_fig_ccc(sel_city,sel_met):
     temp=""
-    if sel_city == None or len(sel_city)==0:
+    if sel_city is None or len(sel_city)==0:
         sel_city=["Denver, CO"]
         temp=" of "+sel_city[0]
     if len(sel_city)==1:
         temp=" of "+sel_city[0]
-    if sel_met == None or len(sel_met)==0:
+    if sel_met is None or len(sel_met)==0:
         sel_met="Median Sale Price"
     out_data=[]
     if sel_met in ["Seasonality of Median Price","Seasonality of Home Sold"]:
