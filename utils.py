@@ -31,13 +31,10 @@ def load_xgb_model():
 def load_model_inputs():
     return pd.read_csv('CSVFiles/NeighborModelInputs.csv').set_index('NBHD_ID')
 
-# grab mapbox token and street view api
+# Mapbox token and Google Street View key are optional; without them the app
+# falls back to a token-free basemap and hides Street View thumbnails.
 def grab_credentials():
-    with open('Credentials/mapbox_access_token.txt') as token_file:
-        token = token_file.readline()
-    with open('Credentials/google_street_view_api.txt') as api_file:
-        api = api_file.readline()
-    return token, api
+    return os.environ.get('MAPBOX_ACCESS_TOKEN', ''), os.environ.get('GOOGLE_STREET_VIEW_API_KEY', '')
 
 # about tab
 def write_about():
