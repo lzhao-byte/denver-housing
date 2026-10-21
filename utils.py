@@ -1,8 +1,8 @@
 import os
 from itertools import product
 import time
-
 import json
+from functools import lru_cache
 
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -10,6 +10,26 @@ import pandas as pd
 import plotly.graph_objects as go
 import xgboost as xgb
 from dash import dcc, html
+
+# XGBoost model input columns, in training order (see scripts/convert_xgb_model.py)
+MODEL_FEATURES = [
+    'AGE', 'AREA_ABG', 'AVG_HH_INC', 'BACHELORSO', 'BED_RMS', 'CCAGE_RM',
+    'CCYRBLT', 'Colleges', 'Crimes', 'DrugDist', 'FBSMT_SQFT', 'FoodStores',
+    'GRD_AREA', 'BATH_RMS', 'Intersects', 'K12s', 'LAND_SQFT', 'LESSTHANHS',
+    'Libraries', 'Malls', 'Marijuana', 'MaxPctRace', 'MaxRaceTyp_BLACK',
+    'MaxRaceTyp_HISPAN', 'MaxRaceTyp_WHITE', 'PCT_AGE65P', 'PCT_AGELES',
+    'PER_CAPITA', 'PCT_SOLD', 'PCT_VAC', 'PER_COMM', 'ParkDist',
+    'Park_Coverage', 'SALE_MONTH', 'SALE_YEAR', 'STORY', 'StLights',
+    'StoreDist', 'TrAccident', 'Tree_Coverage',
+]
+
+@lru_cache(maxsize = 1)
+def load_xgb_model():
+    return xgb.Booster(model_file = 'Models/model_xgb_regressor.ubj')
+
+@lru_cache(maxsize = 1)
+def load_model_inputs():
+    return pd.read_csv('CSVFiles/NeighborModelInputs.csv').set_index('NBHD_ID')
 
 # grab mapbox token and street view api
 def grab_credentials():
@@ -214,37 +234,36 @@ def predict_house_xgb(neighbor, bed, bath, story, age, minarea, maxarea, minlot,
     else:
         months = [month]
 
-    stats = neighbor_stats[neighbor_stats['NBRHD_NAME'] == nbhd_name]
-    demo = neighbor_demo[neighbor_demo['NBHD_NAME'] == nbhd_name]
-
-    avg_hh_inc, bachelorso, lessthanhs, maxpctrace, pctage65p, pctageless = demo['AVG_HH_INC'].values, demo['BACHELORSO'].values, demo['LESSTHANHS'].values, demo['MaxPctRace'].values, demo['PCT_AGE65P'].values, demo ['PCT_AGELES'].values
-    per_capita, pct_vac, pct_comm = demo['PER_CAPITA'].values, demo['PCT_VAC'].values, demo['PER_COMM'].values
-
-    colleges, crimes, foodstores, intersects, k12s, libraries = stats['Colleges'].values, stats['Crimes'].values, stats['FoodStores'].values, stats['Intersects'].values, stats['K12s'].values, stats['Libraries'].values
-    malls, marijuana, stlights, traffic = stats['Malls'].values, stats['Marijuana'].values, stats['StLights'].values, stats['TrAccident'].values
-    parkcover, treecover = stats['ParkA_SqM'].values, stats['TreesA_SqM'].values
+    stats = neighbor_stats[neighbor_stats['NBRHD_NAME'] == nbhd_name].iloc[0]
+    demo = neighbor_demo[neighbor_demo['NBHD_NAME'] == nbhd_name].iloc[0]
+    extra = load_model_inputs().loc[demo['NBHD_ID']]
 
     sel_columns = ['Story', 'Bedrooms', 'Bathrooms', 'Age of House (yrs)', 'Above Ground Area (sqft)', 'Lot Size (sqft)', 'Distance to Park (meters)', 'Distance to Food Stores (meters)', 'Predicted Price ($)']
-    columns = ['AGE', 'AREA_ABG', 'AVG_HH_INC', 'BACHELORSO', 'BED_RMS', 
-                'Colleges', 'Crimes', 'DrugDist', 
-                'FoodStores', 'GRD_AREA', 'BATH_RMS', 'Intersects', 
-                'K12s', 'LAND_SQFT', 'LESSTHANHS', 'Libraries', 'Malls', 'Marijuana', 
-                'MaxPctRace', 'PCT_AGE65P', 'PCT_AGELES', 'PER_CAPITA', 'PCT_VAC', 'PER_COMM', 'ParkDist', 
-                'Park_Coverage', 'SALE_MONTH', 'SALE_YEAR', 'STORY', 
-                'StLights', 'StoreDist', 'TrAccident', 'Tree_Coverage']
 
-    list_of_values = list(product(ages, areas, avg_hh_inc, bachelorso, beds, 
-                                colleges, crimes, drugs, 
-                                foodstores, grns, baths, intersects, 
-                                k12s, lots, lessthanhs, libraries, malls, marijuana, 
-                                maxpctrace, pctage65p, pctageless, per_capita, pct_vac, pct_comm, parks, 
-                                parkcover, months, year, storys,
-                                stlights, stores, traffic, treecover))
+    # house-level inputs: every combination of the selected values
+    house_columns = ['AGE', 'AREA_ABG', 'BED_RMS', 'DrugDist', 'GRD_AREA', 'BATH_RMS',
+                     'LAND_SQFT', 'ParkDist', 'SALE_MONTH', 'SALE_YEAR', 'STORY', 'StoreDist']
+    x_pred = pd.DataFrame(list(product(ages, areas, beds, drugs, grns, baths,
+                                       lots, parks, months, year, storys, stores)),
+                          columns = house_columns)
+    # not exposed in the UI: assume no remodel and no finished basement
+    x_pred['CCYRBLT'] = x_pred['SALE_YEAR'] - x_pred['AGE']
+    x_pred['CCAGE_RM'] = 0
+    x_pred['FBSMT_SQFT'] = 0
 
-    x_pred = pd.DataFrame(list_of_values, columns = columns)
-    xgb_model = xgb.Booster()
-    xgb_model.load_model('Models/model_xgb_regressor.model')
-    y_pred = xgb_model.predict(xgb.DMatrix(x_pred.values))
+    # neighborhood-level inputs, in the units the model was trained on
+    for col in ['AVG_HH_INC', 'BACHELORSO', 'LESSTHANHS', 'MaxPctRace', 'PCT_AGE65P',
+                'PCT_AGELES', 'PER_CAPITA', 'PCT_VAC', 'PER_COMM']:
+        x_pred[col] = demo[col]
+    for col in ['Colleges', 'Crimes', 'FoodStores', 'Intersects', 'K12s', 'Libraries',
+                'Malls', 'Marijuana', 'StLights', 'TrAccident']:
+        x_pred[col] = stats[col]
+    x_pred['Park_Coverage'] = stats['ParkA_SqM'] / stats['Area_SqM']
+    x_pred['Tree_Coverage'] = stats['TreesA_SqM'] / stats['Area_SqM']
+    for col in extra.index:
+        x_pred[col] = extra[col]
+
+    y_pred = load_xgb_model().predict(xgb.DMatrix(x_pred[MODEL_FEATURES]))
     y_cpi = cpi[cpi['month'] == months[0]]['cpi'].values[0]
 
     predict_df = x_pred.copy()
