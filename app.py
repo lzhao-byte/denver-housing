@@ -3,8 +3,9 @@ from utils import (load_files, draw_base_map, grab_street_view_key,
                     write_about, load_markdowns, 
                     load_app_header, family_demo_filter,load_neighbor_features,draw_store_map)
 
+import io
 import json
-import urllib
+import urllib.parse
 import pandas as pd
 import numpy as np
 
@@ -695,7 +696,7 @@ def filter_predict_table(minprice, maxprice, n_clicks, values):
     if n_clicks == 0:
         raise PreventUpdate
     else:
-        df = pd.read_json(values)
+        df = pd.read_json(io.StringIO(values))
         max_price = df[df['Predicted Price ($)'] == max(df['Predicted Price ($)'])]['Predicted Price ($)'].values[0]
         min_price = df[df['Predicted Price ($)'] == min(df['Predicted Price ($)'])]['Predicted Price ($)'].values[0]
         if minprice is None:
@@ -857,7 +858,7 @@ def predict_house_price(neighbor, bed, bath, story, age, minarea, maxarea, minlo
 )
 def save_predict_table(style, values):
     if 'display' not in style:
-        df = pd.read_json(values)
+        df = pd.read_json(io.StringIO(values))
         dfcsv = df.to_csv(index=False, encoding='utf-8')
         dfcsv = "data:text/csv;charset=utf-8," + urllib.parse.quote(dfcsv)
         return dfcsv
