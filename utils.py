@@ -602,7 +602,7 @@ def family_demo_filter(min_price, max_price, min_year, max_year, min_bed, max_be
     if minlot is None:
         minlot = 1000
     if maxlot is None:
-        maxlot_filter = 7500
+        maxlot = 7500
     if neighbor is None:
         neighbor = 'Athmar Park'
     if story is None:
