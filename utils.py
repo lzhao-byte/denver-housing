@@ -277,7 +277,7 @@ def load_files():
     city_seasonality=pd.read_csv(r"CSVFiles/CitySeasonality.csv")
     city_seasonality["City"]=city_seasonality["City"].str.strip()
     city_seasonality=city_seasonality.dropna()
-    cities=set(city_data["Region"].unique()) and set(city_seasonality["City"].unique())
+    cities=set(city_data["Region"].unique()) & set(city_seasonality["City"].unique())
     cities=cities - set(["National","Colorado"])
     metrics=city_data.columns[3:]
 
